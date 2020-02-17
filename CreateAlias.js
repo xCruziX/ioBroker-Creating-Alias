@@ -164,7 +164,7 @@ function assignEnums(){
  }
 
  if(arEnum.length != arId.length){
-      log('Arrays have different size','warn');
+      log('Arrays have different size','error');
       return;
  }
  let mapEnumId = new Map();
