@@ -1,5 +1,9 @@
 /**************************************************************
-                        Changelog
+Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAlias.js#L1
+				Changelog
+Version 1.0.3
+  - Githublink
+  
 Version 1.0.2
   - existsObject for Alias in the timeout
   - remove lowerCase enum
