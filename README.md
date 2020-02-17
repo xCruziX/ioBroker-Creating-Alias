@@ -1,4 +1,5 @@
 # ioBroker-Creating-Alias
+Basierend auf dem Skript von paul53 - https://forum.iobroker.net/topic/27295/vorlage-alias-per-skript-erzeugen
 
 Was dieses Skript kann:
 
