@@ -31,16 +31,13 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
   // so you can assign rooms and function to the parents
   var createAliasPath = (id) => {
       let mergedId = 'alias.0';
-      id = id.replace(mergedId + '.', '');
-      let split = id.split('.');
+      id = id.replace(mergedId + '.', ''); // Remove prefix alias so it will not be changed
+      let split = id.split('.'); 
       let bCreated = false;
       for(let i=0;i<split.length-1;i++){
           mergedId += '.' + split[i];
           if(!existsObject(mergedId) || bConvertExistingPath){ // not exists
               bCreated = true;
-              if(bConvertExistingPath)
-                  log('Converting existing Path: ' + mergedId);
-                  
               let obj;
               if(existsObject(mergedId))
                   obj = getObject(mergedId);
@@ -63,7 +60,7 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
           }
       }
       if(bCreated)
-          log('Create Alias-Path ' + id);
+         log('Created Alias-Path ' + id);
   }
   
   if(bCreateAliasPath)
@@ -103,7 +100,7 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
       setObject(idDst, obj);
   }
   
-   
+  // Save ID and Enum (room or function)
   var attach = (id, enu,value) => {
       value = value.toLowerCase();
       enu = enu.toLowerCase();
@@ -122,7 +119,7 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
           }
       }
       else
-   	log('if(enu.length > 0 && existsObject(sEnuId))','warn');
+   	      log('if(enu.length > 0 && existsObject(sEnuId))','warn');
   }
  
   let bRoom = raum !== undefined && raum.length > 0;
@@ -140,7 +137,8 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
       timeoutAssignEnum = setTimeout(assignEnums,2000);
   }
 }
- 
+
+// Add the saved IDs to the rooms/functions
 function assignEnums(){
  if(arEnum.length != arId.length){
       log('Arrays have different size','warn');
