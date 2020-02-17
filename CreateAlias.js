@@ -179,7 +179,8 @@ function assignEnums(){
 			  members.push(id);
 		}	      
 	 }
-	 log('Can not find Alias ' + id,'error');
+	 else
+             log('Can not find Alias ' + id,'error');
  }
   
   function setMembers(members,enu,map){
