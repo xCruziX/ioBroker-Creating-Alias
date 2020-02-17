@@ -1,6 +1,9 @@
 /**************************************************************
 Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAlias.js
 				Changelog
+Version 1.0.4
+  - Bugfixing array id lenght
+  
 Version 1.0.3
   - Githublink
   
@@ -155,8 +158,10 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
 
 // Add the saved IDs to the rooms/functions
 function assignEnums(){
- if(arEnum.length == 0 || arId.length)
-	return;
+ if(arEnum.length == 0 || arId.length == 0){
+      log('Enum or Id Array lenght is 0','error');
+      return;
+ }
 
  if(arEnum.length != arId.length){
       log('Arrays have different size','warn');
