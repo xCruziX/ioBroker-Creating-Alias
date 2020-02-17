@@ -1,5 +1,8 @@
 /**************************************************************
                          Changelog
+Version 1.0.1
+  - Rooms and functions casesensitive
+  
 Version 1.0
 **************************************************************/
 // typeAlias = 'boolean'; // oder 'number'
@@ -102,7 +105,6 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
   
   // Save ID and Enum (room or function)
   var attach = (id, enu,value) => {
-      value = value.toLowerCase();
       enu = enu.toLowerCase();
       if(id.length == 0 || !existsObject(id)){
           log('if(id.length == 0 || !existsObject(id))','warn');
