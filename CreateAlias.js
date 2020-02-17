@@ -1,5 +1,5 @@
 /**************************************************************
-Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAlias.js#L1
+Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAlias.js
 				Changelog
 Version 1.0.3
   - Githublink
