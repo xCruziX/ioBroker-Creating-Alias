@@ -1,5 +1,10 @@
 /**************************************************************
                          Changelog
+Version 1.0.2
+  - existsObject for Alias in the timeout
+  - remove lowerCase enum
+  - improved logs
+  
 Version 1.0.1
   - Rooms and functions casesensitive
   
@@ -105,11 +110,15 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
   
   // Save ID and Enum (room or function)
   var attach = (id, enu,value) => {
-      enu = enu.toLowerCase();
-      if(id.length == 0 || !existsObject(id)){
-          log('if(id.length == 0 || !existsObject(id))','warn');
+      if(id.length == 0){
+          log('ID has lenght 0, can not attach to enum','warn');
           return;
       }
+      if(value.length == 0){
+          log('Value has lenght 0','warn');
+          return;
+      }
+    
       let sEnuId = 'enum.' + enu + '.' + value;
       if(enu.length > 0 && existsObject(sEnuId)) 
       {
@@ -121,7 +130,7 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
           }
       }
       else
-   	      log('if(enu.length > 0 && existsObject(sEnuId))','warn');
+   	      log('Can not find enum ' + enu,'warn');
   }
  
   let bRoom = raum !== undefined && raum.length > 0;
@@ -142,6 +151,9 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
 
 // Add the saved IDs to the rooms/functions
 function assignEnums(){
+ if(arEnum.length == 0 || arId.length)
+	return;
+
  if(arEnum.length != arId.length){
       log('Arrays have different size','warn');
       return;
@@ -152,19 +164,22 @@ function assignEnums(){
      let enu = arEnum[i];
      let id = arId[i];
   
-     let obj = getObject(enu)
-     let members;
-     if(!mapEnumId.has(enu)){
-         members = obj.common.members;
-         mapEnumId.set(enu,members);
-     }
-     else
-         members = mapEnumId.get(enu);
-     
-     if(!members.includes(id)){
-          log("Adding " + id + " to " + enu);
-          members.push(id);
-      }      
+	 if(existsObject(id)){
+		 let obj = getObject(enu)
+		 let members;
+		 if(!mapEnumId.has(enu)){
+			 members = obj.common.members;
+			 mapEnumId.set(enu,members);
+		 }
+		 else
+			 members = mapEnumId.get(enu);
+		 
+		 if(!members.includes(id)){
+			  log("Adding " + id + " to " + enu);
+			  members.push(id);
+		}	      
+	 }
+	 log('Can not find Alias ' + id,'error');
  }
   
   function setMembers(members,enu,map){
@@ -174,4 +189,3 @@ function assignEnums(){
   }
   mapEnumId.forEach(setMembers);
 }
- 
