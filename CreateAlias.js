@@ -1,3 +1,7 @@
+/**************************************************************
+                         Changelog
+Version 1.0
+**************************************************************/
 // typeAlias = 'boolean'; // oder 'number'
 // read = "val == 'Ein' ? true : false"; // Erkennung "Aus" --> false erfolgt automatisch  
 // write = "val ? 'Ein' : 'Aus'";
