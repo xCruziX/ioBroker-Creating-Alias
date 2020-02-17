@@ -163,24 +163,22 @@ function assignEnums(){
  for(let i=0;i < arEnum.length; i++){
      let enu = arEnum[i];
      let id = arId[i];
-  
-	 if(existsObject(id)){
-		 let obj = getObject(enu)
-		 let members;
-		 if(!mapEnumId.has(enu)){
-			 members = obj.common.members;
-			 mapEnumId.set(enu,members);
-		 }
-		 else
-			 members = mapEnumId.get(enu);
-		 
-		 if(!members.includes(id)){
-			  log("Adding " + id + " to " + enu);
-			  members.push(id);
-		}	      
-	 }
-	 else
-             log('Can not find Alias ' + id,'error');
+     if(existsObject(id)){
+    	 let obj = getObject(enu)
+    	 let members;
+    	 if(!mapEnumId.has(enu)){
+    		 members = obj.common.members;
+    		 mapEnumId.set(enu,members);
+    	 }
+    	 else
+    		 members = mapEnumId.get(enu);    
+    	 if(!members.includes(id)){
+    		  log("Adding " + id + " to " + enu);
+    		  members.push(id);
+    	 }	      
+     }
+     else
+         log('Can not find Alias ' + id,'error');
  }
   
   function setMembers(members,enu,map){
