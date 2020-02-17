@@ -1,5 +1,5 @@
 /**************************************************************
-                         Changelog
+                        Changelog
 Version 1.0.2
   - existsObject for Alias in the timeout
   - remove lowerCase enum
