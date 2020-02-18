@@ -1,6 +1,8 @@
 /**************************************************************
 Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAlias.js
 				Changelog
+Version 1.1.1
+  - Bugfixing, clean functions
 
 Version 1.1.0
   - added function for cleaning enums
@@ -264,28 +266,33 @@ function assignEnums(){
 
 // Cleans enums
 function cleanEnum(){
-    let lisEnums = getEnums('rooms');
-    lisEnums.push(getEnums('functions'));
+    let lisRooms = getEnums('rooms');
+    let lisFunct = getEnums('functions');
     let lisSaved = [];
     let mapClean = new Map();
 
-    for(var l = 0;l < lisEnums.lenght;l++);{
-        let idEnu = lisEnums[l].id;
-        if(!lisSaved.includes(idEnu)){
-            lisSaved.push(idEnu);
-            let objEnu = getObject(idEnu);
-            let members = [];
-            objEnu.common.members.forEach((member) =>{
-                if(existsObject(member))
-                    members.push(member);
-                else
-                    log('Removed id ' + member +' from ' + idEnu);
-            });
-            mapClean.set(idEnu,members);
+    function iterateLis(lis){
+        for(var l = 0;l < lis.lenght;l++);{
+            let idEnu = lis[l].id;
+            if(!lisSaved.includes(idEnu)){
+                lisSaved.push(idEnu);
+                let objEnu = getObject(idEnu);
+                let members = [];
+                objEnu.common.members.forEach((member) =>{
+                    if(existsObject(member))
+                        members.push(member);
+                    else
+                        log('Removed id ' + member +' from ' + idEnu);
+                });
+                mapClean.set(idEnu,members);
+            }
+            log('Cleaned enum ' + idEnu);
         }
-        log('Cleaned enum ' + idEnu);
     }
 
+    iterateLis(lisRooms);
+    iterateLis(lisFunct);
+    
     function setEnu(err){
         if(!err){
             if(lisSaved.length > 0){
