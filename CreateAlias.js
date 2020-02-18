@@ -1,6 +1,10 @@
 /**************************************************************
 Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAlias.js
 				Changelog
+Version 1.1
+  - Improve documentation
+  - beginning function for cleanup enums
+  
 Version 1.0.4
   - Bugfixing array id lenght
   
@@ -17,6 +21,12 @@ Version 1.0.1
   
 Version 1.0
 **************************************************************/
+
+/**************************************
+		Flags /
+		Variablen
+***************************************/
+
 // typeAlias = 'boolean'; // oder 'number'
 // read = "val == 'Ein' ? true : false"; // Erkennung "Aus" --> false erfolgt automatisch  
 // write = "val ? 'Ein' : 'Aus'";
@@ -28,8 +38,28 @@ Version 1.0
 // unit = '%'; // nur für Zahlen
 // states = {0: 'Aus', 1: 'Auto', 2: 'Ein'}; // Zahlen (Multistate) oder Logikwert (z.B. Aus/Ein)
  
-let bCreateAliasPath = false;
+ 
+/*
+If this flag is true, each folder is created seperately so rooms and functions can be assigned.
+*/
+let bCreateAliasPath = false; 
+/*
+Requirements: bCreateAliasPath == true
+
+If this flag is true, existing folders in the path will be converted so rooms and functions can be assigned.
+*/
 let bConvertExistingPath = false;
+
+/*
+If this flash is true, the function "cleanUpAllEnums" will be started at the end
+*/
+let bCleanUpAllEnums = false;
+
+/***************************************
+		Dont't change anything from here /
+		Ab hier nichts verändern
+***************************************/
+
 let arEnum = [];
 let arId = [];
 let timeoutAssignEnum;
@@ -152,8 +182,18 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
           clearTimeout(timeoutAssignEnum);
           timeoutAssignEnum = null;
       }
-      timeoutAssignEnum = setTimeout(assignEnums,2000);
+      timeoutAssignEnum = setTimeout(finishScript,1000);
   }
+}
+
+function finishScript(){
+	if(false // in developement
+	   && bCleanUpAllEnums){	
+		bCleanUpAllEnums();
+		setTimeout(assignEnums,500); // delay to avoid overwriting
+	}
+	else
+	    assignEnums();
 }
 
 // Add the saved IDs to the rooms/functions
@@ -196,4 +236,25 @@ function assignEnums(){
       setObject(enu,obj);
   }
   mapEnumId.forEach(setMembers);
+}
+
+// Remove all Enums that no longer exist
+function cleanUpAllEnums(){
+	let lisRooms = getEnums('romms');
+	let lisFunctions = getEnums('functions');
+	
+	function cl(enu){
+		let mem = enu.members;
+		
+	}
+	
+	for(let i=0;i < lisRooms.lenght;i++){
+		let room = lisRooms[i]
+		cl(room);
+	}
+	
+	for(let i=0;i < lisFunctions.lenght;i++){
+		let funct = lisRooms[i]
+		cl(funct);
+	}
 }
