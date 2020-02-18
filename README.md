@@ -7,6 +7,7 @@ Was dieses Skript kann:
 - Die Werte wie Quelle des Alias, Ziel Datenpunkt des Alias, Raum, Funktion etc. können alle der Funktion selber übergeben werden
 - Der Präfix alias.0. kann hierbei weggelassen werden und wird automatisch generiert
 - Um Räume und Funktionen dem Alias mitzugeben sind diese beim Aufrufen der Methode mitzugeben
+- Nicht mehr existierende IDs können am Schluss mit dem Flag bCleanEnums automatisch aus den Räumen und Funktionen entfernt werden
 - Die Knoten Datenpunke (Im Objektexplorer als Ordner dargestellt) über den eigentlichen Alias Werten können mit den Variablen bCreateAliasPath und bConvertExistingPath so erstell/umgewandelt werden, dass man ihnen Räume und Funktionen zuordnen kann
 
 bCreateAliasPath
