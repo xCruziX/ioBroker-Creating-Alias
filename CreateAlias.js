@@ -1,8 +1,12 @@
 /**************************************************************
 Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAlias.js
 				Changelog
+Version 1.0.6
+  - use callback functions for safety call
+  
 Version 1.0.5
   - decrease timeout assing enum
+  
 Version 1.0.4
   - Bugfixing array id lenght
   
@@ -40,7 +44,7 @@ Version 1.0
 /*
 If this flag is true, each folder is created seperately so rooms and functions can be assigned.
 */
-let bCreateAliasPath = false; 
+let bCreateAliasPath = true; 
 /*
 Requirements: bCreateAliasPath == true
 
@@ -69,76 +73,95 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
   // Create the object Path for alias id, 
   // so you can assign rooms and function to the parents
   var createAliasPath = (id) => {
-      let mergedId = 'alias.0';
-      id = id.replace(mergedId + '.', ''); // Remove prefix alias so it will not be changed
-      let split = id.split('.'); 
-      let bCreated = false;
-      for(let i=0;i<split.length-1;i++){
-          mergedId += '.' + split[i];
-          if(!existsObject(mergedId) || bConvertExistingPath){ // not exists
-              bCreated = true;
-              let obj;
-              if(existsObject(mergedId))
-                  obj = getObject(mergedId);
-              else
-                  obj = {};
- 
-              if(obj.type == undefined || obj.type != 'meta')
-                  obj.type = 'meta';
-              if(obj.common == undefined || obj.common != {})
-                  obj.common = {};
-              if(obj.common.type == undefined || obj.common.type != 'meta.folder')
-                  obj.common.type = 'meta.folder';
-              if(obj.common.desc == undefined || obj.common.desc != 'createAliasPath')
-                  obj.common.desc = 'createAliasPath';
-              if(obj.common.def == undefined || obj.common.def != false)
-                  obj.common.def = false;
-              if(obj.native == undefined || obj.native != {})
-		        obj.native = {};
-		  
-              setObject(mergedId, obj);
-          }
-      }
-      if(bCreated)
-         log('Created Alias-Path ' + id);
+       if(bCreateAliasPath){
+            let mergedId = 'alias.0';
+            id = id.replace(mergedId + '.', ''); // Remove prefix alias so it will not be changed
+            let split = id.split('.'); 
+            let bCreated = false;
+            for(let i=0;i<split.length-1;i++){
+                mergedId += '.' + split[i];
+                if(!existsObject(mergedId) || bConvertExistingPath){ // not exists
+                    bCreated = true;
+                    let obj;
+                    if(existsObject(mergedId))
+                        obj = getObject(mergedId);
+                    else
+                        obj = {};
+
+                    if(obj.type == undefined || obj.type != 'meta')
+                        obj.type = 'meta';
+                    if(obj.common == undefined || obj.common != {})
+                        obj.common = {};
+                    if(obj.common.type == undefined || obj.common.type != 'meta.folder')
+                        obj.common.type = 'meta.folder';
+                    if(obj.common.desc == undefined || obj.common.desc != 'createAliasPath')
+                        obj.common.desc = 'createAliasPath';
+                    if(obj.common.def == undefined || obj.common.def != false)
+                        obj.common.def = false;
+                    if(obj.native == undefined || obj.native != {})
+                        obj.native = {};
+                
+                    setObject(mergedId, obj, (err) =>{
+                        if(!err)
+                            alias();
+                        else
+                            log('Error creating alias-path','error');
+                    });
+                }
+            }
+            if(bCreated)
+                log('Created Alias-Path ' + id);
+       }
+       else
+         alias();
   }
   
-  if(bCreateAliasPath)
-      createAliasPath(idDst);
-  
-  // Create alias object
-  if(!existsObject(idDst)){
-      let obj = {};
-      obj.type = 'state';
-      obj.common = getObject(idSrc).common;
-      obj.common.alias = {};
-      obj.common.alias.id = idSrc;
-      if(typeAlias !== undefined) 
-          obj.common.type = typeAlias;
-      if(obj.common.read !== undefined) 
-          obj.common.alias.read = read;
-      if(obj.common.write !== undefined) 
-          obj.common.alias.write = write;
-      if(nameAlias !== undefined) 
-          obj.common.name = nameAlias;
-      if(role !== undefined) 
-          obj.common.role = role;
-      if(desc !== undefined) 
-          obj.common.desc = desc;
-      if(min !== undefined) 
-          obj.common.min = min;
-      if(max !== undefined) 
-          obj.common.max = max;
-      if(unit !== undefined) 
-          obj.common.unit = unit;
-      if(states !== undefined) 
-          obj.common.states = states;
  
-      obj.native = {};
-      obj.common.custom = []; // Damit die Zuordnung zu iQontrol, Sql etc. nicht übernommen wird
-      log('Created Alias-State ' + idDst);
-      setObject(idDst, obj);
+    //   createAliasPath(idDst);
+  
+  function alias(){
+      // Create alias object
+        if(!existsObject(idDst)){
+            let obj = {};
+            obj.type = 'state';
+            obj.common = getObject(idSrc).common;
+            obj.common.alias = {};
+            obj.common.alias.id = idSrc;
+            if(typeAlias !== undefined) 
+                obj.common.type = typeAlias;
+            if(obj.common.read !== undefined) 
+                obj.common.alias.read = read;
+            if(obj.common.write !== undefined) 
+                obj.common.alias.write = write;
+            if(nameAlias !== undefined) 
+                obj.common.name = nameAlias;
+            if(role !== undefined) 
+                obj.common.role = role;
+            if(desc !== undefined) 
+                obj.common.desc = desc;
+            if(min !== undefined) 
+                obj.common.min = min;
+            if(max !== undefined) 
+                obj.common.max = max;
+            if(unit !== undefined) 
+                obj.common.unit = unit;
+            if(states !== undefined) 
+                obj.common.states = states;
+
+            obj.native = {};
+            obj.common.custom = []; // Damit die Zuordnung zu iQontrol, Sql etc. nicht übernommen wird
+            log('Created Alias-State ' + idDst);
+            setObject(idDst, obj,(err) =>{ 
+                if(!err)
+                    startAttach(); 
+                else
+                    log('Error creating-alias','error');
+            });
+        }
+        else
+            startAttach();
   }
+  
   
   // Save ID and Enum (room or function)
   var attach = (id, enu,value) => {
@@ -165,20 +188,23 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
    	      log('Can not find enum ' + sEnuId,'warn');
   }
  
-  let bRoom = raum !== undefined && raum.length > 0;
-  let bGewerk = gewerk !== undefined && gewerk.length > 0;
- 
-  if(bRoom)
-      attach(idDst,'rooms',raum);
-  if(bGewerk)
-      attach(idDst,'functions',gewerk);
-  if(bRoom || bGewerk){
-        if(timeoutAssignEnum){
-            clearTimeout(timeoutAssignEnum);
-            timeoutAssignEnum = null;
-        }
-        timeoutAssignEnum = setTimeout(finishScript,100);
-  }
+ function startAttach(){
+    let bRoom = raum !== undefined && raum.length > 0;
+    let bGewerk = gewerk !== undefined && gewerk.length > 0;
+    
+    if(bRoom)
+        attach(idDst,'rooms',raum);
+    if(bGewerk)
+        attach(idDst,'functions',gewerk);
+    if(bRoom || bGewerk){
+            if(timeoutAssignEnum){
+                clearTimeout(timeoutAssignEnum);
+                timeoutAssignEnum = null;
+            }
+            timeoutAssignEnum = setTimeout(finishScript,100);
+    }
+ }
+  createAliasPath(idDst);
 }
 
 function finishScript(){
