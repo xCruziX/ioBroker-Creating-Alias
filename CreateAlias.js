@@ -92,9 +92,13 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
               if(obj.common.def == undefined || obj.common.def != false)
                   obj.common.def = false;
               if(obj.native == undefined || obj.native != {})
-		  obj.native = {};
-		  
-              setObject(mergedId, obj);
+				  obj.native = {};
+              setObject(mergedId, obj,(err)=>{
+				  if(!err)	
+					  alias();
+				  else 
+					  log('Error creating Alias-Path','error');
+			  });
           }
       }
       if(bCreated)
@@ -105,37 +109,59 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
       createAliasPath(idDst);
   
   // Create alias object
-  if(!existsObject(idDst)){
-      let obj = {};
-      obj.type = 'state';
-      obj.common = getObject(idSrc).common;
-      obj.common.alias = {};
-      obj.common.alias.id = idSrc;
-      if(typeAlias !== undefined) 
-          obj.common.type = typeAlias;
-      if(obj.common.read !== undefined) 
-          obj.common.alias.read = read;
-      if(obj.common.write !== undefined) 
-          obj.common.alias.write = write;
-      if(nameAlias !== undefined) 
-          obj.common.name = nameAlias;
-      if(role !== undefined) 
-          obj.common.role = role;
-      if(desc !== undefined) 
-          obj.common.desc = desc;
-      if(min !== undefined) 
-          obj.common.min = min;
-      if(max !== undefined) 
-          obj.common.max = max;
-      if(unit !== undefined) 
-          obj.common.unit = unit;
-      if(states !== undefined) 
-          obj.common.states = states;
- 
-      obj.native = {};
-      obj.common.custom = []; // Damit die Zuordnung zu iQontrol, Sql etc. nicht übernommen wird
-      log('Created Alias-State ' + idDst);
-      setObject(idDst, obj);
+  function alias(){
+	  if(!existsObject(idDst)){
+		  let obj = {};
+		  obj.type = 'state';
+		  obj.common = getObject(idSrc).common;
+		  obj.common.alias = {};
+		  obj.common.alias.id = idSrc;
+		  if(typeAlias !== undefined) 
+			  obj.common.type = typeAlias;
+		  if(obj.common.read !== undefined) 
+			  obj.common.alias.read = read;
+		  if(obj.common.write !== undefined) 
+			  obj.common.alias.write = write;
+		  if(nameAlias !== undefined) 
+			  obj.common.name = nameAlias;
+		  if(role !== undefined) 
+			  obj.common.role = role;
+		  if(desc !== undefined) 
+			  obj.common.desc = desc;
+		  if(min !== undefined) 
+			  obj.common.min = min;
+		  if(max !== undefined) 
+			  obj.common.max = max;
+		  if(unit !== undefined) 
+			  obj.common.unit = unit;
+		  if(states !== undefined) 
+			  obj.common.states = states;
+	 
+		  obj.native = {};
+		  obj.common.custom = []; // Damit die Zuordnung zu iQontrol, Sql etc. nicht übernommen wird
+		  log('Created Alias-State ' + idDst);
+		  setObject(idDst, obj, 
+		  (err) => {
+			  if(!err) 
+				  setEnum(idDst,raum, gewerk);
+			  else	
+				  log('Error creating alias object','error');
+			}); // Callback
+		}
+  }
+  
+  if(!bCreateAliasPath)
+	alias();
+  
+  function setEnum(id,room, funct){
+		if(room != undefined && room.lenght > 0){
+			let idRoom = 'enum.rooms.' + room;
+			if()
+		}
+		
+		if(funct != undefined && funct.lenght > 0){
+			let idFunct = 'enum.functions.' + funct;
+		}
   }
   
   // Save ID and Enum (room or function)
@@ -162,21 +188,23 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
       else
    	      log('Can not find enum ' + enu,'warn');
   }
- 
-  let bRoom = raum !== undefined && raum.length > 0;
-  let bGewerk = gewerk !== undefined && gewerk.length > 0;
- 
-  if(bRoom)
-      attach(idDst,'rooms',raum);
-  if(bGewerk)
-      attach(idDst,'functions',gewerk);
-  if(bRoom || bGewerk){
-      if(timeoutAssignEnum){
-          clearTimeout(timeoutAssignEnum);
-          timeoutAssignEnum = null;
-      }
-      timeoutAssignEnum = setTimeout(finishScript,1000);
-  }
+
+
+  return;
+  // let bRoom = raum !== undefined && raum.length > 0;
+  // let bGewerk = gewerk !== undefined && gewerk.length > 0;
+  
+  // if(bRoom)
+      // attach(idDst,'rooms',raum);
+  // if(bGewerk)
+      // attach(idDst,'functions',gewerk);
+  // if(bRoom || bGewerk){
+      // if(timeoutAssignEnum){
+          // clearTimeout(timeoutAssignEnum);
+          // timeoutAssignEnum = null;
+      // }
+      // timeoutAssignEnum = setTimeout(finishScript,1000);
+  // }
 }
 
 function finishScript(){
