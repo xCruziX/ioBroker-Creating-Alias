@@ -92,8 +92,9 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
               if(obj.common.def == undefined || obj.common.def != false)
                   obj.common.def = false;
               if(obj.native == undefined || obj.native != {})
+		  obj.native = {};
+		  
               setObject(mergedId, obj);
-                  obj.native = {};
           }
       }
       if(bCreated)
