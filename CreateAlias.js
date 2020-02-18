@@ -1,6 +1,10 @@
 /**************************************************************
 Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAlias.js
 				Changelog
+
+Version 1.1.0
+  - added function for cleaning enums
+
 Version 1.0.6
   - use callback functions for safety call
   
@@ -41,17 +45,16 @@ Version 1.0
 // states = {0: 'Aus', 1: 'Auto', 2: 'Ein'}; // Zahlen (Multistate) oder Logikwert (z.B. Aus/Ein)
  
  
-/*
-If this flag is true, each folder is created seperately so rooms and functions can be assigned.
-*/
-let bCreateAliasPath = true; 
+let bCreateAliasPath = true;  // If this flag is true, each folder is created seperately so rooms and functions can be assigned.
+
 /*
 Requirements: bCreateAliasPath == true
-
 If this flag is true, existing folders in the path will be converted so rooms and functions can be assigned.
 */
 let bConvertExistingPath = false;
 
+// Remove not existing objects from enums at the end
+let bCleanEnums = false;
 
 /***************************************
 		Dont't change anything from here /
@@ -81,7 +84,7 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
             for(let i=0;i<split.length-1;i++){
                 mergedId += '.' + split[i];
                 if(!existsObject(mergedId) || bConvertExistingPath){ // not exists
-                    bCreated = true;
+                    
                     let obj;
                     if(existsObject(mergedId))
                         obj = getObject(mergedId);
@@ -102,15 +105,18 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
                         obj.native = {};
                 
                     setObject(mergedId, obj, (err) =>{
-                        if(!err)
+                        if(!err){
+                            log('Created Alias-Path ' + id);
+                            bCreated = true;
                             alias();
+                        }
                         else
                             log('Error creating alias-path','error');
                     });
                 }
             }
-            if(bCreated)
-                log('Created Alias-Path ' + id);
+            if(!bCreated)
+                alias();
        }
        else
          alias();
@@ -121,6 +127,7 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
   
   function alias(){
       // Create alias object
+      
         if(!existsObject(idDst)){
             let obj = {};
             obj.type = 'state';
@@ -204,11 +211,14 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
             timeoutAssignEnum = setTimeout(finishScript,100);
     }
  }
+ 
   createAliasPath(idDst);
 }
 
 function finishScript(){
 	assignEnums();
+    if(bCleanEnums)
+        setTimeout(cleanEnum,100);
 }
 
 // Add the saved IDs to the rooms/functions
@@ -250,4 +260,49 @@ function assignEnums(){
       setObject(enu,obj);
   }
   mapEnumId.forEach(setMembers);
+}
+
+// Cleans enums
+function cleanEnum(){
+    let lisEnums = getEnums('rooms');
+    lisEnums.push(getEnums('functions'));
+    let lisSaved = [];
+    let mapClean = new Map();
+
+    for(var l = 0;l < lisEnums.lenght;l++);{
+        let idEnu = lisEnums[l].id;
+        if(!lisSaved.includes(idEnu)){
+            lisSaved.push(idEnu);
+            let objEnu = getObject(idEnu);
+            let members = [];
+            objEnu.common.members.forEach((member) =>{
+                if(existsObject(member))
+                    members.push(member);
+                else
+                    log('Removed id ' + member +' from ' + idEnu);
+            });
+            mapClean.set(idEnu,members);
+        }
+        log('Cleaned enum ' + idEnu);
+    }
+
+    function setEnu(err){
+        if(!err){
+            if(lisSaved.length > 0){
+                let id = lisSaved[0];
+                let mem = mapClean.get(id);
+                let obj = getObject(id);
+                obj.common.members = mem;
+                setObject(id,obj,setEnu);
+                log('Set members of ' + id);
+                lisSaved.splice(0,1);
+            }
+        }
+        else
+            log('Error set members','error');
+    }
+
+    setTimeout(()=>{
+        setEnu(false);
+    },100);
 }
