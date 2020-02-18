@@ -1,6 +1,8 @@
 /**************************************************************
 Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAlias.js
 				Changelog
+Version 1.0.5
+  - decrease timeout assing enum
 Version 1.0.4
   - Bugfixing array id lenght
   
@@ -92,7 +94,7 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
               if(obj.common.def == undefined || obj.common.def != false)
                   obj.common.def = false;
               if(obj.native == undefined || obj.native != {})
-		  obj.native = {};
+		        obj.native = {};
 		  
               setObject(mergedId, obj);
           }
@@ -160,7 +162,7 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
           }
       }
       else
-   	      log('Can not find enum ' + enu,'warn');
+   	      log('Can not find enum ' + sEnuId,'warn');
   }
  
   let bRoom = raum !== undefined && raum.length > 0;
@@ -171,11 +173,11 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
   if(bGewerk)
       attach(idDst,'functions',gewerk);
   if(bRoom || bGewerk){
-      if(timeoutAssignEnum){
-          clearTimeout(timeoutAssignEnum);
-          timeoutAssignEnum = null;
-      }
-      timeoutAssignEnum = setTimeout(finishScript,1000);
+        if(timeoutAssignEnum){
+            clearTimeout(timeoutAssignEnum);
+            timeoutAssignEnum = null;
+        }
+        timeoutAssignEnum = setTimeout(finishScript,100);
   }
 }
 
@@ -186,7 +188,6 @@ function finishScript(){
 // Add the saved IDs to the rooms/functions
 function assignEnums(){
  if(arEnum.length == 0 || arId.length == 0){
-      log('Enum or Id Array lenght is 0','error');
       return;
  }
 
