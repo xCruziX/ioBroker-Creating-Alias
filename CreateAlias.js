@@ -1,6 +1,8 @@
 /**************************************************************
 Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAlias.js
 				Changelog
+Version 1.1.2
+  - fix log message 'Created Alias-Path '
 Version 1.1.1
   - Bugfixing, clean functions
 
@@ -108,7 +110,7 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
                 
                     setObject(mergedId, obj, (err) =>{
                         if(!err){
-                            log('Created Alias-Path ' + id);
+                            log('Created Alias-Path ' + mergedId);
                             bCreated = true;
                             alias();
                         }
