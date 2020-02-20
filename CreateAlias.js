@@ -36,7 +36,7 @@ Version 1.0.5
 // states = {0: 'Aus', 1: 'Auto', 2: 'Ein'}; // Zahlen (Multistate) oder Logikwert (z.B. Aus/Ein)
  
  
-let bCreateAliasPath = false;  // If this flag is true, each folder is created seperately so rooms and functions can be assigned.
+let bCreateAliasPath = false;  // If this flag is true, each folder will be created seperately so rooms and functions can be assigned.
 
 /*
 Requirements: bCreateAliasPath == true
