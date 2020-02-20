@@ -17,22 +17,6 @@ Version 1.0.6
   
 Version 1.0.5
   - decrease timeout assing enum
-  
-Version 1.0.4
-  - Bugfixing array id lenght
-  
-Version 1.0.3
-  - Githublink
-  
-Version 1.0.2
-  - existsObject for Alias in the timeout
-  - remove lowerCase enum
-  - improved logs
-  
-Version 1.0.1
-  - Rooms and functions casesensitive
-  
-Version 1.0
 **************************************************************/
 
 /**************************************
