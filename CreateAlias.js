@@ -1,6 +1,9 @@
 /**************************************************************
 Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAlias.js
 				Changelog
+Version 1.2.0
+  - remove clean enum
+
 Version 1.1.2
   - fix log message 'Created Alias-Path '
 Version 1.1.1
