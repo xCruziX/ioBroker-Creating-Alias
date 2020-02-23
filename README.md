@@ -15,3 +15,27 @@ bCreateAliasPath
 
 bConvertExistingPath (Erfordert das bCreateAliasPath auf true gesetzt ist)
 => Auch schon existierende Knoten Datenpunkte werden konvertiert um Räume und Funktionen zuweisen zu können.
+
+Beispiele:
+
+Erstellt wird aus shelly.0.SHSW-1#68BAC3#1.Relay0.Switch der Alias Test.Licht.An (alias.0.Test.Licht.An)
+```
+let idSource = 'shelly.0.SHSW-1#68BAC3#1.Relay0.Switch';
+let idTargetAlias = 'Test.Licht.An';
+let room = 'Wohnzimmer';
+let funct = 'Licht';
+
+createAlias(idSource,idTargetAlias,room,funct);
+```
+
+Erstellt wird aus shelly.0.SHSW-1#68BAC3#1.Relay0.Switch der Alias Test.Licht.Shelly.An (alias.0.Test.Licht.Shelly.An)
+und aus sonoff.0.dev-1.on der Alias Test.Licht.Sonoff.An (alias.0.Test.Licht.Sonoff.An)
+```
+let idSource = 'shelly.0.SHSW-1#68BAC3#1.Relay0.Switch';
+let idTargetAlias = 'Test.Licht.Shelly.An';
+let room = 'Wohnzimmer';
+let funct = 'Licht';
+
+createAlias(idSource,idTargetAlias,room,funct);
+createAlias('sonoff.0.dev-1.on','Test.Licht.Sonoff.An',room,funct);
+```
