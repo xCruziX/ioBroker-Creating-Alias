@@ -1,22 +1,29 @@
 /**************************************************************
 Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAlias.js
 				Changelog
-Version 1.2.0
-  - remove clean enum
-
+Version 1.1.3
+  - use callbacks in alias-path
 Version 1.1.2
   - fix log message 'Created Alias-Path '
 Version 1.1.1
   - Bugfixing, clean functions
-
 Version 1.1.0
   - added function for cleaning enums
-
 Version 1.0.6
   - use callback functions for safety call
-  
 Version 1.0.5
-  - decrease timeout assing enum
+  - decrease timeout assing enum 
+Version 1.0.4
+  - Bugfixing array id lenght
+Version 1.0.3
+  - Githublink 
+Version 1.0.2
+  - existsObject for Alias in the timeout
+  - remove lowerCase enum
+  - improved logs
+Version 1.0.1
+  - Rooms and functions casesensitive
+Version 1.0
 **************************************************************/
 
 /**************************************
@@ -35,8 +42,7 @@ Version 1.0.5
 // unit = '%'; // nur für Zahlen
 // states = {0: 'Aus', 1: 'Auto', 2: 'Ein'}; // Zahlen (Multistate) oder Logikwert (z.B. Aus/Ein)
  
- 
-let bCreateAliasPath = false;  // If this flag is true, each folder will be created seperately so rooms and functions can be assigned.
+let bCreateAliasPath = false;  // If this flag is true, each folder is created seperately so rooms and functions can be assigned.
 
 /*
 Requirements: bCreateAliasPath == true
@@ -65,17 +71,26 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
   // so you can assign rooms and function to the parents
   var createAliasPath = (id) => {
        if(bCreateAliasPath){
+            let lisMergedIds = [];
             let mergedId = 'alias.0';
             id = id.replace(mergedId + '.', ''); // Remove prefix alias so it will not be changed
             let split = id.split('.'); 
-            let bCreated = false;
             for(let i=0;i<split.length-1;i++){
                 mergedId += '.' + split[i];
-                if(!existsObject(mergedId) || bConvertExistingPath){ // not exists
-                    
+                lisMergedIds.push(mergedId);
+            }
+            
+            function path(){
+                if(lisMergedIds.length == 0) {// Zu Ende erstellt
+                    alias();
+                    return;
+                }
+                let tmpId = lisMergedIds[0];
+                lisMergedIds.splice(0,1); // entferne element
+                if(!existsObject(tmpId) || bConvertExistingPath){ // not exists
                     let obj;
-                    if(existsObject(mergedId))
-                        obj = getObject(mergedId);
+                    if(existsObject(tmpId))
+                        obj = getObject(tmpId);
                     else
                         obj = {};
 
@@ -91,20 +106,19 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
                         obj.common.def = false;
                     if(obj.native == undefined || obj.native != {})
                         obj.native = {};
-                
-                    setObject(mergedId, obj, (err) =>{
+
+                    
+                    setObject(tmpId, obj, (err) =>{
                         if(!err){
-                            log('Created Alias-Path ' + mergedId);
-                            bCreated = true;
-                            alias();
+                            log('Created Alias-Path ' + tmpId);
+                            path();
                         }
                         else
                             log('Error creating alias-path','error');
                     });
                 }
             }
-            if(!bCreated)
-                alias();
+            path();
        }
        else
          alias();
@@ -196,11 +210,15 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
                 clearTimeout(timeoutAssignEnum);
                 timeoutAssignEnum = null;
             }
-            timeoutAssignEnum = setTimeout(assignEnums,100);
+            timeoutAssignEnum = setTimeout(finishScript,100);
     }
  }
  
   createAliasPath(idDst);
+}
+
+function finishScript(){
+	assignEnums();
 }
 
 // Add the saved IDs to the rooms/functions
