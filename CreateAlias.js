@@ -50,10 +50,10 @@ If this flag is true, existing folders in the path will be converted so rooms an
 */
 let bConvertExistingPath = false;
 
-/***************************************
-		Dont't change anything from here /
-		Ab hier nichts verändern
-***************************************/
+/**********************************************************
+	Don't change anything from here /
+	Ab hier nichts verändern
+**********************************************************/
 
 let arEnum = [];
 let arId = [];
@@ -261,3 +261,7 @@ function assignEnums(){
   }
   mapEnumId.forEach(setMembers);
 }
+/**********************************************************
+		END /
+		ENDE
+**********************************************************/
