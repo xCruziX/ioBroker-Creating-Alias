@@ -37,5 +37,5 @@ let room = 'Wohnzimmer';
 let funct = 'Licht';
 
 createAlias(idSource,idTargetAlias,room,funct);
-createAlias('sonoff.0.dev-1.on','Test.Licht.Sonoff.An',room,funct);
+createAlias('sonoff.0.dev-1.on','Test.Licht.Sonoff.An','Wohnzimmer','Licht');
 ```
