@@ -4,38 +4,6 @@ Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAl
 Version 1.1.4
 - fix error by using bCreateAliasPath and bConvertExistingPath (has no target 9/Error creating alias-path)
 
-Version 1.1.3
-  - use callbacks in alias-path
-
-Version 1.1.2
-  - fix log message 'Created Alias-Path '
-Version 1.1.1
-  - Bugfixing, clean functions
-
-Version 1.1.0
-  - added function for cleaning enums
-
-Version 1.0.6
-  - use callback functions for safety call
-  
-Version 1.0.5
-  - decrease timeout assing enum
-  
-Version 1.0.4
-  - Bugfixing array id lenght
-  
-Version 1.0.3
-  - Githublink
-  
-Version 1.0.2
-  - existsObject for Alias in the timeout
-  - remove lowerCase enum
-  - improved logs
-  
-Version 1.0.1
-  - Rooms and functions casesensitive
-  
-Version 1.0
 **************************************************************/
 
 /**************************************
