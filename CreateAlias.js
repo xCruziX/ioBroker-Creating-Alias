@@ -1,28 +1,40 @@
 /**************************************************************
 Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAlias.js
 				Changelog
+Version 1.1.4
+- fix error by using bCreateAliasPath and bConvertExistingPath (has no target 9/Error creating alias-path)
+
 Version 1.1.3
   - use callbacks in alias-path
+
 Version 1.1.2
   - fix log message 'Created Alias-Path '
 Version 1.1.1
   - Bugfixing, clean functions
+
 Version 1.1.0
   - added function for cleaning enums
+
 Version 1.0.6
   - use callback functions for safety call
+  
 Version 1.0.5
-  - decrease timeout assing enum 
+  - decrease timeout assing enum
+  
 Version 1.0.4
   - Bugfixing array id lenght
+  
 Version 1.0.3
-  - Githublink 
+  - Githublink
+  
 Version 1.0.2
   - existsObject for Alias in the timeout
   - remove lowerCase enum
   - improved logs
+  
 Version 1.0.1
   - Rooms and functions casesensitive
+  
 Version 1.0
 **************************************************************/
 
@@ -42,7 +54,8 @@ Version 1.0
 // unit = '%'; // nur für Zahlen
 // states = {0: 'Aus', 1: 'Auto', 2: 'Ein'}; // Zahlen (Multistate) oder Logikwert (z.B. Aus/Ein)
  
-let bCreateAliasPath = false;  // If this flag is true, each folder is created seperately so rooms and functions can be assigned.
+ 
+let bCreateAliasPath = true;  // If this flag is true, each folder is created seperately so rooms and functions can be assigned.
 
 /*
 Requirements: bCreateAliasPath == true
@@ -50,14 +63,15 @@ If this flag is true, existing folders in the path will be converted so rooms an
 */
 let bConvertExistingPath = false;
 
-/**********************************************************
-	Don't change anything from here /
-	Ab hier nichts verändern
-**********************************************************/
+/***************************************
+		Dont't change anything from here /
+		Ab hier nichts verändern
+***************************************/
 
 let arEnum = [];
 let arId = [];
 let timeoutAssignEnum;
+var callbackAlias = undefined;
 function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias, role, desc, min, max, unit, states) {
   if(!idDst.includes('alias.0.'))
       idDst = 'alias.0.' + idDst;
@@ -94,21 +108,35 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
                     else
                         obj = {};
 
-                    if(obj.type == undefined || obj.type != 'meta')
-                        obj.type = 'meta';
-                    if(obj.common == undefined || obj.common != {})
-                        obj.common = {};
-                    if(obj.common.type == undefined || obj.common.type != 'meta.folder')
-                        obj.common.type = 'meta.folder';
-                    if(obj.common.desc == undefined || obj.common.desc != 'createAliasPath')
-                        obj.common.desc = 'createAliasPath';
-                    if(obj.common.def == undefined || obj.common.def != false)
-                        obj.common.def = false;
-                    if(obj.native == undefined || obj.native != {})
-                        obj.native = {};
-
+                    let bApply = false;
+                    if(obj != undefined){
+                        if(obj.type == undefined || String(obj.type) != 'meta'){
+                            obj.type = 'meta';
+                            bApply = true;
+                        }
+                        if(obj.common == undefined){
+                            obj.common = {};
+                            obj.common.type = 'meta.folder';
+                            bApply = true;
+                        }
+                        else if(obj.common.type == undefined || String(obj.common.type) != 'meta.folder'){
+                            obj.common.type = 'meta.folder';
+                            bApply = true;
+                        }
+                        if(obj.native == undefined){
+                            obj.native = {};
+                            bApply = true;
+                        }
+                    }
+                    else{
+                        path();
+                        log('Object is undefined');
+                        return;
+                    }
                     
-                    setObject(tmpId, obj, (err) =>{
+
+                    if(bApply){
+                        setObject(tmpId, obj, (err) =>{
                         if(!err){
                             log('Created Alias-Path ' + tmpId);
                             path();
@@ -116,6 +144,10 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
                         else
                             log('Error creating alias-path','error');
                     });
+                    }
+                    else
+                        path();
+                    
                 }
             }
             path();
@@ -124,8 +156,6 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
          alias();
   }
   
- 
-    //   createAliasPath(idDst);
   
   function alias(){
       // Create alias object
@@ -261,7 +291,51 @@ function assignEnums(){
   }
   mapEnumId.forEach(setMembers);
 }
-/**********************************************************
-		END /
-		ENDE
-**********************************************************/
+
+
+
+function setAliasReadWrite(aliasId,read,write){
+    if(aliasId == undefined || read == undefined || write == undefined)
+        return;
+    setAliasRead(aliasId,read);
+    setAliasWrite(aliasId,write);
+}
+
+
+function setAliasRead(aliasId,value){
+    setTimeout(()=>{
+         let tmp = aliasId;
+        if(!tmp.includes('alias.0.'))
+            tmp = 'alias.0.' +tmp;
+        if(!existsState(tmp)){
+            log('setAliasRead => Der Datenpunkt existiert nicht => ' +tmp,'error');
+            return;
+        }
+        let obj = getObject(tmp);
+        let alias = obj.common.alias;
+        if(alias.read != value){
+            log('Set read property');
+            alias.read = value;
+            setObject(tmp,obj);
+        }
+    },30)
+}
+
+function setAliasWrite(aliasId,value){
+    setTimeout(()=>{
+        let tmp = aliasId;
+        if(!tmp.includes('alias.0.'))
+            tmp = 'alias.0.' +tmp;
+        if(!existsState(tmp)){
+            log('setAliaswrite => Der Datenpunkt existiert nicht => ' +tmp,'error');
+            return;
+        }
+        let obj = getObject(tmp);
+        let alias = obj.common.alias;
+        if(alias.write != value){
+            log('Set write property');
+            alias.write = value;
+            setObject(tmp,obj);
+        }
+    },30)
+}
