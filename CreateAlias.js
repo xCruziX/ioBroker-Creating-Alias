@@ -32,7 +32,7 @@ If this flag is true, existing folders in the path will be converted so rooms an
 let bConvertExistingPath = false;
 
 /***************************************
-		Dont't change anything from here /
+		Don't change anything from here /
 		Ab hier nichts verändern
 ***************************************/
 
@@ -63,12 +63,12 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
             }
             
             function path(){
-                if(lisMergedIds.length == 0) {// Zu Ende erstellt
+                if(lisMergedIds.length == 0) {
                     alias();
                     return;
                 }
                 let tmpId = lisMergedIds[0];
-                lisMergedIds.splice(0,1); // entferne element
+                lisMergedIds.splice(0,1); // remove element
                 if(!existsObject(tmpId) || bConvertExistingPath){ // not exists
                     let obj;
                     if(existsObject(tmpId))
@@ -260,50 +260,3 @@ function assignEnums(){
   mapEnumId.forEach(setMembers);
 }
 
-
-
-function setAliasReadWrite(aliasId,read,write){
-    if(aliasId == undefined || read == undefined || write == undefined)
-        return;
-    setAliasRead(aliasId,read);
-    setAliasWrite(aliasId,write);
-}
-
-
-function setAliasRead(aliasId,value){
-    setTimeout(()=>{
-         let tmp = aliasId;
-        if(!tmp.includes('alias.0.'))
-            tmp = 'alias.0.' +tmp;
-        if(!existsState(tmp)){
-            log('setAliasRead => Der Datenpunkt existiert nicht => ' +tmp,'error');
-            return;
-        }
-        let obj = getObject(tmp);
-        let alias = obj.common.alias;
-        if(alias.read != value){
-            log('Set read property');
-            alias.read = value;
-            setObject(tmp,obj);
-        }
-    },30)
-}
-
-function setAliasWrite(aliasId,value){
-    setTimeout(()=>{
-        let tmp = aliasId;
-        if(!tmp.includes('alias.0.'))
-            tmp = 'alias.0.' +tmp;
-        if(!existsState(tmp)){
-            log('setAliaswrite => Der Datenpunkt existiert nicht => ' +tmp,'error');
-            return;
-        }
-        let obj = getObject(tmp);
-        let alias = obj.common.alias;
-        if(alias.write != value){
-            log('Set write property');
-            alias.write = value;
-            setObject(tmp,obj);
-        }
-    },30)
-}
