@@ -1,7 +1,6 @@
 /**************************************************************
 Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAlias.js
 				Changelog
-
 Version 1.1.5
 - added flag for correcting source id
 
@@ -10,9 +9,7 @@ Version 1.1.4
 
 Version 1.1.3
   - use callbacks in alias-path
-
   
-Version 1.0
 **************************************************************/
 
 /**************************************
@@ -41,10 +38,11 @@ If this flag is true, existing folders in the path will be converted so rooms an
 let bConvertExistingPath = false;
 
 /*
-If the destination datapoint exists and there is a difference between the new source id and the source id in the existing dp
-this will be corrected
+If the alias already exists and there is a difference between the new source id and the source id in the existing alias,
+the source id will be changed.
+This can be used for changing the source ids of an alias, for example for a devices change.
 */
-let bCorrectSource = true;
+let bCorrectSource = false;
 
 /***************************************
 		Dont't change anything from here /
