@@ -1,9 +1,18 @@
 /**************************************************************
 Github - https://github.com/xCruziX/ioBroker-Creating-Alias/blob/master/CreateAlias.js
 				Changelog
+
+Version 1.1.5
+- added flag for correcting source id
+
 Version 1.1.4
 - fix error by using bCreateAliasPath and bConvertExistingPath (has no target 9/Error creating alias-path)
 
+Version 1.1.3
+  - use callbacks in alias-path
+
+  
+Version 1.0
 **************************************************************/
 
 /**************************************
@@ -23,7 +32,7 @@ Version 1.1.4
 // states = {0: 'Aus', 1: 'Auto', 2: 'Ein'}; // Zahlen (Multistate) oder Logikwert (z.B. Aus/Ein)
  
  
-let bCreateAliasPath = true;  // If this flag is true, each folder is created seperately so rooms and functions can be assigned.
+let bCreateAliasPath = false;  // If this flag is true, each folder is created seperately so rooms and functions can be assigned.
 
 /*
 Requirements: bCreateAliasPath == true
@@ -31,8 +40,14 @@ If this flag is true, existing folders in the path will be converted so rooms an
 */
 let bConvertExistingPath = false;
 
+/*
+If the destination datapoint exists and there is a difference between the new source id and the source id in the existing dp
+this will be corrected
+*/
+let bCorrectSource = true;
+
 /***************************************
-		Don't change anything from here /
+		Dont't change anything from here /
 		Ab hier nichts verändern
 ***************************************/
 
@@ -63,12 +78,12 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
             }
             
             function path(){
-                if(lisMergedIds.length == 0) {
+                if(lisMergedIds.length == 0) {// Zu Ende erstellt
                     alias();
                     return;
                 }
                 let tmpId = lisMergedIds[0];
-                lisMergedIds.splice(0,1); // remove element
+                lisMergedIds.splice(0,1); // entferne element
                 if(!existsObject(tmpId) || bConvertExistingPath){ // not exists
                     let obj;
                     if(existsObject(tmpId))
@@ -165,6 +180,26 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
                     log('Error creating-alias','error');
             });
         }
+        else if(bCorrectSource){
+            // Check the Source ID
+            // log('Checking Sourcepath');
+            let obj = getObject(idDst);
+            if(obj != undefined && obj.common != undefined && obj.common.alias != undefined && obj.common.alias.id != undefined
+            && obj.common.alias.id != idSrc){
+                let before = obj.common.alias.id;
+                obj.common.alias.id = idSrc;
+                setObject(idDst, obj,(err) =>{ 
+                    if(!err){
+                        log(idDst + ': Correcting Sourcepath from \''  + before + '\' to \'' +  idSrc + '\'');
+                        startAttach(); 
+                    }
+                    else
+                        log('Error correcting path','error');
+                    });
+            }
+            else
+                startAttach();
+        }
         else
             startAttach();
   }
@@ -259,4 +294,3 @@ function assignEnums(){
   }
   mapEnumId.forEach(setMembers);
 }
-
