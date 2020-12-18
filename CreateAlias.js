@@ -92,7 +92,7 @@ function createAlias(idSrc, idDst,raum, gewerk,typeAlias, read, write, nameAlias
                     let bApply = false;
                     if(obj != undefined){
                         if(obj.type == undefined || String(obj.type) != 'meta'){
-                            obj.type = 'meta';
+                            obj.type = 'folder';
                             bApply = true;
                         }
                         if(obj.common == undefined){
